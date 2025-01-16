@@ -54,13 +54,13 @@ function fxn = D(f, n, variable, h, m, b)
       case 'v'
         fxn = @(u, v) sum((f(u.*N, v + h*shifts) * C), 2);
       case 'uv'
-        [Su, Sv] = meshgrid(shifts);
-
-        subindex = @(A, r, c) A(r, c);
+        % Only works for a function w/ one dimensional output for now
+        [Su, Sv] = meshgrid(h * shifts);
 
         C = c * c';
-        
-        f1 = @(u, v, n) sum( subindex(f(u + h*Su, v + h*Sv) * C, (M*(n - 1) + 1):(n*M), 1:M ) , 'all') ;
-        fxn = @(u, v) [ f1(u,v, 1) ; f1(u, v, 2); f1(u, v, 3) ]; 
+
+        fxn = @(u, v) sum( C .* f(u + Su, v + Sv), 'all'); 
+% $$$         f1 = @(u, v, n) sum( subindex(f(u + Su, v + Sv) * C, (M*(n - 1) + 1):(n*M), 1:M ) , 'all') ;
+% $$$         fxn = @(u, v) [ f1(u,v, 1) ; f1(u, v, 2); f1(u, v, 3) ]; 
     end 
 end
